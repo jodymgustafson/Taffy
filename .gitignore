@@ -1,0 +1,5 @@
+*.dll
+*.pdb
+bin/Taffy.dll.config
+*.suo
+*.user
