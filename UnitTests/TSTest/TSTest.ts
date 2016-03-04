@@ -30,6 +30,13 @@ module TSTest
                 Assert.fail("null or undefined", val);
         }
 
+        /** Asserts that a value is null or undefined */
+        public static isNotNullOrUndefined(val: any): void
+        {
+            if ((val === null || typeof val === "undefined"))
+                Assert.fail("not null or undefined", val);
+        }
+
         /** Asserts that a value is undefined */
         public static isUndefined(val: any): void
         {

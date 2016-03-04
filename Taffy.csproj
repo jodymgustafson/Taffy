@@ -10,12 +10,13 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>1.7</TypeScriptToolsVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.css" />
@@ -41,10 +42,13 @@
     <TypeScriptCompile Include="src\AudioLib.ts" />
     <TypeScriptCompile Include="src\Collections.Map.ts" />
     <TypeScriptCompile Include="src\IO.JsonFile.ts" />
+    <TypeScriptCompile Include="src\Chrome.AppStorage.ts" />
+    <TypeScriptCompile Include="src\System.AppStorageAsync.ts" />
     <TypeScriptCompile Include="src\System.AppStorage.ts" />
     <TypeScriptCompile Include="src\System.Byte.ts" />
     <TypeScriptCompile Include="src\System.Color.ts" />
     <TypeScriptCompile Include="src\Convert.ts" />
+    <TypeScriptCompile Include="src\System.IAppStorageAsync.ts" />
     <TypeScriptCompile Include="src\System.KeyCodes.ts" />
     <TypeScriptCompile Include="src\System.ts" />
     <TypeScriptCompile Include="src\Tracking.W3Counter.ts" />
@@ -55,6 +59,7 @@
     <TypeScriptCompile Include="UnitTests\System.Tests.ts" />
     <TypeScriptCompile Include="UnitTests\TSTest\Assert.ts" />
     <TypeScriptCompile Include="UnitTests\TSTest\TSTest.ts" />
+    <TypeScriptCompile Include="UnitTests\UI.CanvasContext2D.Tests.ts" />
     <TypeScriptCompile Include="UnitTests\unit-tests.ts" />
   </ItemGroup>
   <PropertyGroup>

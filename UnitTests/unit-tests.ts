@@ -1,5 +1,7 @@
 ﻿/// <reference path="system.tests.ts" />
 /// <reference path="convert.tests.ts" />
+/// <reference path="ui.canvascontext2d.tests.ts" />
+/// <reference path="system.byte.tests.ts" />
 
 (function ()
 {
@@ -10,6 +12,7 @@
     testSuite.addUnitTest(new UnitTests.SystemTests());
     testSuite.addUnitTest(new UnitTests.ConvertTests());
     testSuite.addUnitTest(new UnitTests.SystemByteTests());
+    testSuite.addUnitTest(new UnitTests.UICanvasContext2DTests());
 
     // Run it
     testSuite.runWhenDOMReady(() =>

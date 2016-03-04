@@ -5,47 +5,66 @@ module Collections
     */
     export class Map<V>
     {
+        private _keys: string[] = [];
         private _map = {};
 
-        public setItem(key: string, value: V): void
+        public set(key: string, value: V): void
         {
+            this._keys.push(key);
             this._map[key] = value;
         }
 
-        public getItem(key: string): V
+        public get(key: string): V
         {
             return this._map[key];
         }
 
-        public removeItem(key: string): void
+        // can't be named delete because it's a keyword
+        public remove(key: string): boolean
         {
-            delete this._map[key];
+            let i = this._keys.indexOf(key);
+            if (i >= 0)
+            {
+                this._keys.splice(i, 1);
+                delete this._map[key];
+                return true;
+            }
+
+            return false;
         }
 
         public clear(): void
         {
+            this._keys = [];
             this._map = {};
         }
 
-        public containsKey(key: string): boolean
+        public has(key: string): boolean
         {
-            return (this._map[key] !== undefined);
+            return this._keys.indexOf(key) >= 0;
         }
 
-        public each(callback: (item: V) => any): void
+        public forEach(callback: (value: V, key: string, map: Map<V>) => any): void
         {
-            for (var name in this._map)
+            for (let key of this._keys)
             {
-                callback(this._map[name]);
+                callback(this._map[key], key, this);
             }
         }
 
-        public eachKey(callback: (key: string) => any): void
+        public keys(): string[]
         {
-            for (var name in this._map)
+            return this._keys.slice();
+        }
+
+        public values(): V[]
+        {
+            var values: V[] = [];
+            this.forEach(v =>
             {
-                callback(name);
-            }
+                values.push(v);
+            });
+            return values;
         }
     }
 }

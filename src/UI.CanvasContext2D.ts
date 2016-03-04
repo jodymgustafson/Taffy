@@ -368,17 +368,17 @@
         ///////////////////////////////////////////////////////////////////////////
         // Image methods
         ///////////////////////////////////////////////////////////////////////////
-        public drawImage(image: HTMLElement, x: number, y: number, w: number, h: number): CanvasContext2D
+        public drawImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, x: number, y: number, w: number, h: number): CanvasContext2D
         {
             this.context.drawImage(image, x, y, w, h);
             return this;
         }
-        public drawClippedImage(image: HTMLElement, sx: number, sy: number, sw: number, sh: number, x: number, y: number, w: number, h: number): CanvasContext2D
+        public drawClippedImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, sx: number, sy: number, sw: number, sh: number, x: number, y: number, w: number, h: number): CanvasContext2D
         {
             this.context.drawImage(image, sx, sy, sw, sh, x, y, w, h);
             return this;
         }
-        public drawRotatedImage(image: HTMLImageElement, x: number, y: number, angle: number, width: number, height: number): CanvasContext2D
+        public drawRotatedImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, x: number, y: number, angle: number, width: number, height: number): CanvasContext2D
         {
             this.context.save();
             // Move to where we want to draw the image
@@ -607,7 +607,7 @@
             return gradient;
         }
 
-        public createPattern(image: HTMLElement, repetition: string): CanvasPattern
+        public createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern
         {
             return this.context.createPattern(image, repetition);
         }

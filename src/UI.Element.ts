@@ -335,10 +335,10 @@ module UI
 
         public setStyle(name: string, value: string, priority?: string): UI.Element
         {
-            if (this._htmlElement.style.setAttribute)
+            if (this._htmlElement.style["setAttribute"])
             {
                 // IE9
-                this._htmlElement.style.setAttribute(name, value);
+                this._htmlElement.style["setAttribute"](name, value);
             }
             else if (priority)
             {
