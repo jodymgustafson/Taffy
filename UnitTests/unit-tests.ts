@@ -12,6 +12,8 @@
     testSuite.addUnitTest(new UnitTests.SystemTests());
     testSuite.addUnitTest(new UnitTests.ConvertTests());
     testSuite.addUnitTest(new UnitTests.SystemByteTests());
+    testSuite.addUnitTest(new UnitTests.AppStorageAsyncTests());
+    testSuite.addUnitTest(new UnitTests.ChromeAppStorageTests());
     testSuite.addUnitTest(new UnitTests.UICanvasContext2DTests());
 
     // Run it

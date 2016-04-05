@@ -19,18 +19,20 @@ module Chrome
     }
 
     /**
-     * Wraps Chrome storage to comply with the System.IAppStorageAsync interface
+     * Wraps Chrome storage to comply with the System.IAppStorageAsync interface.
+     * Note: Chrome storage saves objects so you don't need to convert objects to json first.
+     * Therefore you could use 
      */
     export class AppStorage implements System.IAppStorageAsync
     {
-        private static _chromeStorage = window["chrome"]["storage"];
+        private static _chromeStorage = window["chrome"] ? window["chrome"]["storage"] : null;
         private static _isAvailable = Boolean(AppStorage._chromeStorage);
 
         private _storageType: AppStorageType;
         private _storageArea: StorageArea;
         private _prefix = "";
 
-        /** Used to determine if local storage available */
+        /** Used to determine if chrome storage available */
         public static get isAvailable(): boolean
         {
             return AppStorage._isAvailable;
@@ -51,7 +53,7 @@ module Chrome
         public get prefix() { return this._prefix; }
 
         /**
-         * Sets the value with the specified key into this._storageArea.
+         * Sets the value with the specified key into this._storageArea as json.
          * @param key Key
          * @param val Value
          * @param callback Optional function to call when saved
@@ -59,17 +61,11 @@ module Chrome
          */
         public setValue(key: string, val: any, callback?: () => any, replacer?: (key: string, value: any) => any): AppStorage
         {
-            if (AppStorage.isAvailable)
-            {
-                key = this._prefix + key;
-                this._storageArea.set({ key: JSON.stringify(val, replacer) }, callback);
-                if (callback) callback();
-            }
-            return this;
+            return this.setItem(key, JSON.stringify(val, replacer), callback);
         }
 
         /**
-         * Gets the value with the specified key from this._storageArea
+         * Gets the value with the specified key from this._storageArea and parses its json using the reviver
          * @key Key
          * @callback Fuction to call with the value. Value will be null if not found.
          * @reviver Optional reviver to use when parsing the JSON 
@@ -78,27 +74,77 @@ module Chrome
         {
             if (AppStorage.isAvailable)
             {
-                this.getItem(key, (item => callback(item != null ? JSON.parse(item, reviver) : null)));
+                return this.getItem<T>(key, item =>
+                {
+                    let v = item;
+                    if (item != null && typeof item === "string")
+                    {
+                        v = JSON.parse(<any>item, reviver);
+                    }
+                    callback(v);
+                });
+            }
+            else
+            {
+                callback(null);
+            }
+        }
+
+        /**
+         * Sets the value with the specified key into this._storageArea without converting to json first.
+         * @param key Key
+         * @param val Value
+         * @param callback Optional function to call when saved
+         */
+        public setItem(key: string, val: any, callback?: () => any): AppStorage
+        {
+            if (AppStorage.isAvailable)
+            {
+                key = this._prefix + key;
+                let items = {};
+                items[key] = val;
+                this._storageArea.set(items, callback);
+            }
+            else
+            {
+                if (callback) callback();
             }
             return this;
         }
 
         /**
          * Gets the raw value of an item from this._storageArea without parsing it
-         * @returns The value or null if not found
+         * @callback Fuction to call with the value. Value will be null if not found.
          */
-        public getItem(key: string, callback: (data: string) => any): AppStorage
+        public getItem<T>(key: string, callback: (val: T) => any): AppStorage
         {
-            this._storageArea.get(this._prefix + key, (data) => callback(data[key]));
+            if (AppStorage.isAvailable)
+            {
+                // Note: In chrome the value returned is wrapped in an object, so we need to unwrap it
+                key = this._prefix + key;
+                this._storageArea.get(key, data =>
+                {
+                    let v = (data.hasOwnProperty(key) ? data[key] : null);
+                    callback(v);
+                });
+            }
+            else
+            {
+                if (callback) callback(null);
+            }
             return this;
         }
 
         /** Removes the value with the specified key */
-        public removeValue(key: string, callback?: () => any): AppStorage
+        public remove(key: string, callback?: () => any): AppStorage
         {
             if (AppStorage.isAvailable)
             {
                 this._storageArea.remove(this._prefix + key, callback);
+            }
+            else
+            {
+                if (callback) callback();
             }
             return this;
         }
@@ -110,7 +156,7 @@ module Chrome
             {
                 for (var i in keys)
                 {
-                    this.removeValue(keys[i]);
+                    this.remove(keys[i]);
                 }
                 if (callback) callback();
             });
@@ -119,18 +165,18 @@ module Chrome
 
         /**
          * Determines if the specified key has a value in this._storageArea
-         * @returns True if the key has a value
+         * @callback Fuction to call with the result.
          */
-        public contains(key: string, callback?: (result: boolean) => any): AppStorage
+        public contains(key: string, callback: (result: boolean) => any): AppStorage
         {
-            this.getItem(key, (item) => callback(item !== null));
+            this.getItem(key, item => callback(item !== null));
             return this;
         }
 
         /**
          * Gets the keys from this._storageArea for the application that optionally match a filter
          * @param filter: (Optional) A function that returns true if the key should be included in the result
-         * @returns An array of keys
+         * @param callback Function to call with the array of keys. If none are found the list will be empty (never null).
          */
         public getKeys(callback: (keys: string[]) => any, filter?: (key: string) => boolean): AppStorage
         {
@@ -155,6 +201,10 @@ module Chrome
                     callback(keys);
                 });
             }
+            else
+            {
+                callback(keys);
+            }
 
             return this;
         }
@@ -169,9 +219,24 @@ module Chrome
         }
 
         /** Adds a storage event handler */
-        public addStorageListener(callback: (evt: StorageEvent) => any, useCapture?: boolean): AppStorage
+        public addStorageListener(callback: (evt: System.IStorageEventAsync) => any): AppStorage
         {
-            addEventListener("storage", callback, useCapture);
+            if (AppStorage.isAvailable)
+            {
+                AppStorage._chromeStorage.onChanged.addListener((changes: any, storageType: string) =>
+                {
+                    for (let key in changes)
+                    {
+                        var change = changes[key];
+                        callback({
+                            key: key,
+                            oldValue: change.oldValue,
+                            newValue: change.newValue,
+                            storageArea: storageType,
+                        });
+                    }
+                });
+            }
             return this;
         }
     }

@@ -1,5 +1,11 @@
 *.dll
 *.pdb
-bin/Taffy.dll.config
 *.suo
 *.user
+*.map
+*.js
+.vs/*
+bin/*
+obj/*
+unitTests/**/*.js
+unitTests/**/*.map

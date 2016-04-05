@@ -111,7 +111,7 @@ module AudioLib
         }
 
         /** Enumerates over each cached audio resource */
-        public forEach(callback: (audio: HTMLAudioElement) => any): void
+        public forEach(callback: (audio: HTMLAudioElement, name: string) => any): void
         {
             this.audios.each(callback);
         }

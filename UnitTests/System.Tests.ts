@@ -1,5 +1,5 @@
 ﻿/// <reference path="../src/system.ts" />
-module UnitTests 
+namespace UnitTests 
 {
     "use strict";
     export class SystemTests extends TSTest.UnitTest

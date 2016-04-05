@@ -10,7 +10,7 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <TypeScriptToolsVersion>1.7</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -55,6 +55,7 @@
     <TypeScriptCompile Include="src\UI.CanvasContext2D.ts" />
     <TypeScriptCompile Include="src\UI.Element.ts" />
     <TypeScriptCompile Include="UnitTests\Convert.Tests.ts" />
+    <TypeScriptCompile Include="UnitTests\System.AppStorageAsync.Tests.ts" />
     <TypeScriptCompile Include="UnitTests\System.Byte.Tests.ts" />
     <TypeScriptCompile Include="UnitTests\System.Tests.ts" />
     <TypeScriptCompile Include="UnitTests\TSTest\Assert.ts" />

@@ -5,66 +5,47 @@ module Collections
     */
     export class Map<V>
     {
-        private _keys: string[] = [];
         private _map = {};
 
-        public set(key: string, value: V): void
+        public setItem(key: string, value: V): void
         {
-            this._keys.push(key);
             this._map[key] = value;
         }
 
-        public get(key: string): V
+        public getItem(key: string): V
         {
             return this._map[key];
         }
 
-        // can't be named delete because it's a keyword
-        public remove(key: string): boolean
+        public removeItem(key: string): void
         {
-            let i = this._keys.indexOf(key);
-            if (i >= 0)
-            {
-                this._keys.splice(i, 1);
-                delete this._map[key];
-                return true;
-            }
-
-            return false;
+            delete this._map[key];
         }
 
         public clear(): void
         {
-            this._keys = [];
             this._map = {};
         }
 
-        public has(key: string): boolean
+        public containsKey(key: string): boolean
         {
-            return this._keys.indexOf(key) >= 0;
+            return (this._map[key] !== undefined);
         }
 
-        public forEach(callback: (value: V, key: string, map: Map<V>) => any): void
+        public each(callback: (item: V, key: string, map: Map<V>) => any): void
         {
-            for (let key of this._keys)
+            for (var name in this._map)
             {
-                callback(this._map[key], key, this);
+                callback(this._map[name], name, this);
             }
         }
 
-        public keys(): string[]
+        public eachKey(callback: (key: string) => any): void
         {
-            return this._keys.slice();
-        }
-
-        public values(): V[]
-        {
-            var values: V[] = [];
-            this.forEach(v =>
+            for (var name in this._map)
             {
-                values.push(v);
-            });
-            return values;
+                callback(name);
+            }
         }
     }
 }

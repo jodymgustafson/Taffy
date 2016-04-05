@@ -64,7 +64,7 @@
         }
 
         /** Removes the value with the specified key */
-        public removeValue(key: string): AppStorage
+        public remove(key: string): AppStorage
         {
             if (AppStorage.isAvailable)
             {
@@ -79,7 +79,7 @@
             var keys = this.getKeys();
             for (var i in keys)
             {
-                this.removeValue(keys[i]);
+                this.remove(keys[i]);
             }
             return this;
         }
