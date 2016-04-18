@@ -7,5 +7,6 @@
 .vs/*
 bin/*
 obj/*
+packages/*
 unitTests/**/*.js
 unitTests/**/*.map

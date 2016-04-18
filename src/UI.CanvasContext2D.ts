@@ -1,4 +1,4 @@
-﻿module UI
+﻿namespace UI
 {
     "use strict";
 
@@ -368,17 +368,46 @@
         ///////////////////////////////////////////////////////////////////////////
         // Image methods
         ///////////////////////////////////////////////////////////////////////////
-        public drawImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, x: number, y: number, w: number, h: number): CanvasContext2D
+        /**
+         * Draws an image to the canvas and optionally scales it
+         * @param image
+         * @param x Destination x
+         * @param y Destination y
+         * @param w Width to scale image to (optional)
+         * @param h Height to scale image to (optional)
+         */
+        public drawImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, x: number, y: number, w: number = image.width, h: number = image.height): CanvasContext2D
         {
             this.context.drawImage(image, x, y, w, h);
             return this;
         }
-        public drawClippedImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, sx: number, sy: number, sw: number, sh: number, x: number, y: number, w: number, h: number): CanvasContext2D
+        /**
+         * Draws a portion of an image to the canvas
+         * @param image The source image
+         * @param sx Clip area x
+         * @param sy Clip area y
+         * @param sw Clip area w
+         * @param sh Clip area h
+         * @param x  Destination x
+         * @param y  Destination y
+         * @param w  Destination w (optional, default is clip area w)
+         * @param h  Destination h (optional, default is clip area h)
+         */
+        public drawClippedImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, sx: number, sy: number, sw: number, sh: number, x: number, y: number, w: number = sw, h: number = sh): CanvasContext2D
         {
             this.context.drawImage(image, sx, sy, sw, sh, x, y, w, h);
             return this;
         }
-        public drawRotatedImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, x: number, y: number, angle: number, width: number, height: number): CanvasContext2D
+        /**
+         * Draws an image rotating about its center and optionally scales it
+         * @param image
+         * @param x Destination x
+         * @param y Destination y
+         * @param angle Angle in radians (0 to 2PI)
+         * @param w Width to scale image to (optional)
+         * @param h Height to scale image to (optional)
+         */
+        public drawRotatedImage(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, x: number, y: number, angle: number, width: number = image.width, height: number = image.height): CanvasContext2D
         {
             this.context.save();
             // Move to where we want to draw the image
@@ -404,7 +433,7 @@
             return this;
         }
         /** Draws the lines defined by the set of coordinates
-          * @param {number[]} coords Set of x and y coordinates
+          * @param coords An array containing sets of x and y coordinates (ex: [x1, y1, x2, y2, ...])
           */
         public drawLines(...coords: number[]): CanvasContext2D
         {
@@ -482,7 +511,8 @@
             this.context.fillRect(x, y, w, h);
             return this;
         }
-        /** Draws a rounded rectangle
+        /**
+        * Draws a rounded rectangle
         * @param r radius of the corners
         */
         public drawRoundedRect(x: number, y: number, w: number, h: number, r: number): CanvasContext2D;
@@ -518,7 +548,7 @@
         // Shape methods
         ///////////////////////////////////////////////////////////////////////////
         /** Draws a shape defined by the set of coordinates
-          * @param {number[]} coords Set of x and y coordinates
+          * @param coords Array of x and y coordinates (ex: [x1, y1, x2, y2, ...])
           */
         public drawShape(...coords: number[]): CanvasContext2D
         {
@@ -531,7 +561,7 @@
         }
 
         /** Fills a shape defined by the set of coordinates
-          * @param {number[]} coords Set of x and y coordinates
+          * @param coords Array of x and y coordinates (ex: [x1, y1, x2, y2, ...])
           */
         public fillShape(...coords: number[]): CanvasContext2D
         {
@@ -548,15 +578,13 @@
         ///////////////////////////////////////////////////////////////////////////
         public drawText(text: string, x: number, y: number, maxWidth?: number): CanvasContext2D
         {
-            if (maxWidth === undefined) this.context.strokeText(text, x, y);
-            else this.context.strokeText(text, x, y);
+            this.context.strokeText(text, x, y, maxWidth);
             return this;
         }
 
         public fillText(text: string, x: number, y: number, maxWidth?: number): CanvasContext2D
         {
-            if (maxWidth === undefined) this.context.fillText(text, x, y);
-            else this.context.fillText(text, x, y, maxWidth);
+            this.context.fillText(text, x, y, maxWidth);
             return this;
         }
 
@@ -568,6 +596,7 @@
         ///////////////////////////////////////////////////////////////////////////
         // Gradient/Pattern methods
         ///////////////////////////////////////////////////////////////////////////
+
         /** Creates a gradient with no color stops */
         public createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
         /** Creates a gradient from one color to another */
@@ -577,68 +606,150 @@
         public createLinearGradient(x0: number, y0: number, x1: number, y1: number, ...colorsOrStops: any[]): CanvasGradient
         {
             var gradient = this.context.createLinearGradient(x0, y0, x1, y1);
-            if (colorsOrStops && colorsOrStops.length > 0)
-            {
-                if (colorsOrStops.length === 2 && typeof colorsOrStops[0] === "string")
-                {
-                    gradient.addColorStop(0, colorsOrStops[0]);
-                    gradient.addColorStop(1, colorsOrStops[1]);
-                }
-                else
-                {
-                    for (var i = 0; i < colorsOrStops.length; i++)
-                    {
-                        var stop = colorsOrStops[i];
-                        gradient.addColorStop(stop.offset, stop.color);
-                    }
-                }
-            }
-            return gradient;
+            return this.addGradientColorStops(gradient, ...colorsOrStops);
         }
 
-        public createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number, ...colorStops: CanvasContext2D.IColorStop[]): CanvasGradient
+        /** Creates a gradient with no color stops */
+        public createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient;
+        /** Creates a gradient from one color to another */
+        public createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number, color1: string, color2: string): CanvasGradient;
+        /** Creates a gradient with multiple color stops */
+        public createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number, ...colorsOrStops: CanvasContext2D.IColorStop[]): CanvasGradient;
+        public createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number, ...colorsOrStops: any[]): CanvasGradient
         {
             var gradient = this.context.createRadialGradient(x0, y0, r0, x1, y1, r1);
-            for (var i = 0; i < colorStops.length; i++)
-            {
-                var stop = colorStops[i];
-                gradient.addColorStop(stop.offset, stop.color);
-            }
-            return gradient;
+            return this.addGradientColorStops(gradient, ...colorsOrStops);
         }
 
-        public createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern
+        /**
+         * Cerates a pattern from an image
+         * @param image
+         * @param repetition Type of repetition (Use CanvasContext2D.Repetition), default is repeat.
+         */
+        public createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition = CanvasContext2D.Repetition.repeat): CanvasPattern
         {
             return this.context.createPattern(image, repetition);
         }
 
+        /**
+         * Draws a gradient rectangle from one color to another
+         * @param x
+         * @param y
+         * @param w
+         * @param h
+         * @param angle Angle of the gradient in radians [0, pi/2], where 0 is completely horizontal, pi/2 is vertical.
+         * @param color1 The start color
+         * @param color2 The end color
+         */
+        public drawLinearGradient(x: number, y: number, w: number, h: number, angle: number, color1: string, color2: string): CanvasContext2D;
+        /**
+         * Draws a gradient rectangle with multiple color stops
+         * @param x
+         * @param y
+         * @param w
+         * @param h
+         * @param angle Angle of the gradient in radians [0, pi/2], where 0 is completely horizontal, pi/2 is vertical.
+         * @param colorStops
+         */
+        public drawLinearGradient(x: number, y: number, w: number, h: number, angle: number, ...colorStops: CanvasContext2D.IColorStop[]): CanvasContext2D;
+        public drawLinearGradient(x: number, y: number, w: number, h: number, angle: number, ...colorsOrStops: any[]): CanvasContext2D
+        {
+            if (angle < 0 || angle > CanvasContext2D.PI_OVER_2)
+            {
+                throw new Error("CanvasContext2D.drawLinearGradient angle must be between 0 and PI/2");
+            }
+            let dx = Math.cos(angle);
+            let dy = Math.sin(angle);
+            let gradient = this.createLinearGradient(x, y, x + dx * w, y + dy * h, ...colorsOrStops);
+            this.save()
+                .fillStyle(gradient)
+                .fillRect(x, y, w, h)
+                .restore();
+            return this;
+        }
+
+        /** Draws a radial gradient from one color to another */
+        public drawRadialGradient(x: number, y: number, r: number, outerColor: string, innerColor: string): CanvasContext2D;
+        /** Draws a radial gradient with multiple color stops */
+        public drawRadialGradient(x: number, y: number, r: number, ...colorsOrStops: CanvasContext2D.IColorStop[]): CanvasContext2D;
+        public drawRadialGradient(x: number, y: number, r: number, ...colorsOrStops: any[]): CanvasContext2D
+        {
+            let gradient = this.createRadialGradient(x, y, r, x, y, 0, ...colorsOrStops);
+            this.save()
+                .fillStyle(gradient)
+                .fillCircle(x, y, r)
+                .restore();
+            return this;
+        }
+
+        /** Draws a rectangle with the pattern correctly applied at the origin of the rectangle (not the canvas) */
+        public drawPattern(x: number, y: number, w: number, h: number, pattern: CanvasPattern): CanvasContext2D;
+        /** Draws a rectangle with the pattern correctly applied at the origin of the rectangle (not the canvas) */
+        public drawPattern(x: number, y: number, w: number, h: number, image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition?: string): CanvasContext2D;
+        public drawPattern(x: number, y: number, w: number, h: number, imageOrPattern: CanvasPattern | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition = CanvasContext2D.Repetition.repeat): CanvasContext2D
+        {
+            let pat = (imageOrPattern instanceof CanvasPattern ? imageOrPattern : this.createPattern(<HTMLImageElement | HTMLCanvasElement | HTMLVideoElement>imageOrPattern, repetition));
+            this.save()
+                .fillStyle(pat)
+                .translate(x, y)
+                .fillRect(0, 0, w, h)
+                .restore();
+            return this;
+        }
+
+
         ///////////////////////////////////////////////////////////////////////////
         // ImageData methods
         ///////////////////////////////////////////////////////////////////////////
-        public createImageData(imageDataOrW?: any, h?: number): ImageData
+
+        /** Creates ImageData from an existing ImageData */
+        public createImageData(imageData: ImageData): ImageData;
+        /** Creates ImageData of the specified size */
+        public createImageData(w: number, h: number): ImageData;
+        public createImageData(imageDataOrW?: number | ImageData, h?: number): ImageData
         {
-            if (h === undefined)
+            if (h === undef)
             {
-                return this.context.createImageData(imageDataOrW);
+                return this.context.createImageData(<ImageData>imageDataOrW);
             }
             else
             {
-                return this.context.createImageData(imageDataOrW, h);
+                return this.context.createImageData(<number>imageDataOrW, h);
             }
         }
 
+        /** Gets image data for the entire canvas */
+        public getImageData(): ImageData;
+        /** Gets image data for a region of the canvas */
+        public getImageData(x: number, y: number, w: number, h: number): ImageData;
         public getImageData(sx?: number, sy?: number, sw?: number, sh?: number): ImageData
         {
             return this.context.getImageData(sx || 0, sy || 0, sw || this.canvas.width, sh || this.canvas.height);
         }
 
-        public putImageData(imageData: ImageData, dx?: number, dy?: number, destX?: number, destY?: number, destW?: number, destH?: number): CanvasContext2D
+        /** Puts image data into the canvas at the top-left */
+        public putImageData(imageData: ImageData): CanvasContext2D;
+        /** Puts image data into the canvas at the specified point */
+        public putImageData(imageData: ImageData, x: number, y: number): CanvasContext2D;
+        /** Puts image data into the canvas at the specified point and offset */
+        public putImageData(imageData: ImageData, x: number, y: number, destX: number, destY: number): CanvasContext2D;
+        /** Puts image data into the canvas at the specified point and offset and scales it */
+        public putImageData(imageData: ImageData, x: number, y: number, destX: number, destY: number, destW: number, destH: number): CanvasContext2D;
+        public putImageData(imageData: ImageData, x = 0, y = 0, destX?: number, destY?: number, destW?: number, destH?: number): CanvasContext2D
         {
-            dx = dx || 0;
-            dy = dy || 0;
-            if (destW !== undefined) this.context.putImageData(imageData, dx, dy, destX, destY, destW, destH);
-            else if (destX !== undefined) this.context.putImageData(imageData, dx, dy, destX, destY);
-            else this.context.putImageData(imageData, dx, dy);
+            // Passing in undefined values doesn't work so check params
+            if (destX === undef)
+            {
+                this.context.putImageData(imageData, x, y);
+            }
+            else if (destW === undef)
+            {
+                this.context.putImageData(imageData, x, y, destX, destY);
+            }
+            else
+            {
+                this.context.putImageData(imageData, x, y, destX, destY, destW, destH);
+            }
             return this;
         }
 
@@ -795,9 +906,36 @@
             return false;
         }
 
+        //private addGradientColorStops(gradient: CanvasGradient, color1: string, color2: string): CanvasGradient;
+        //private addGradientColorStops(gradient: CanvasGradient, ...colorsOrStops: CanvasContext2D.IColorStop[]): CanvasGradient;
+        private addGradientColorStops(gradient: CanvasGradient, ...colorsOrStops: any[]): CanvasGradient
+        {
+            if (colorsOrStops && colorsOrStops.length > 0)
+            {
+                if (colorsOrStops.length === 2 && typeof colorsOrStops[0] === "string")
+                {
+                    gradient.addColorStop(0, colorsOrStops[0]);
+                    gradient.addColorStop(1, colorsOrStops[1]);
+                }
+                else
+                {
+                    for (var i = 0; i < colorsOrStops.length; i++)
+                    {
+                        var stop = colorsOrStops[i];
+                        gradient.addColorStop(stop.offset, stop.color);
+                    }
+                }
+            }
+            return gradient;
+        }
+
         ///////////////////////////////////////////////////////////////////////////
         // Static methods
         ///////////////////////////////////////////////////////////////////////////
+        /**
+         * Converts degrees to radians
+         * @param degrees
+         */
         public static toRadians(degrees): number
         {
             return CanvasContext2D.PI_OVER_180 * degrees;
@@ -862,6 +1000,7 @@
         export interface IColorStop
         {
             color: string;
+            /** A number between 0 and 1.0 */
             offset: number;
         }
     }

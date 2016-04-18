@@ -20,11 +20,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="Content\jasmine\jasmine.css" />
+    <Content Include="Content\jasmine\jasmine_favicon.png" />
     <Content Include="index.html" />
+    <Content Include="Scripts\jasmine\boot.js" />
+    <Content Include="Scripts\jasmine\console.js" />
+    <Content Include="Scripts\jasmine\jasmine-html.js" />
+    <Content Include="Scripts\jasmine\jasmine.js" />
+    <Content Include="UnitTests\canvas-tests.html" />
     <Content Include="UnitTests\unit-tests.html" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="packages.config" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -33,6 +41,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\typings\jasmine\jasmine.d.ts" />
     <TypeScriptCompile Include="src\AngularTS.ts" />
     <TypeScriptCompile Include="src\Async.Tracker.ts" />
     <TypeScriptCompile Include="src\AudioLib.AudioClip.ts" />
@@ -43,6 +52,7 @@
     <TypeScriptCompile Include="src\Collections.Map.ts" />
     <TypeScriptCompile Include="src\IO.JsonFile.ts" />
     <TypeScriptCompile Include="src\Chrome.AppStorage.ts" />
+    <TypeScriptCompile Include="src\Random.ts" />
     <TypeScriptCompile Include="src\System.AppStorageAsync.ts" />
     <TypeScriptCompile Include="src\System.AppStorage.ts" />
     <TypeScriptCompile Include="src\System.Byte.ts" />
@@ -54,15 +64,15 @@
     <TypeScriptCompile Include="src\Tracking.W3Counter.ts" />
     <TypeScriptCompile Include="src\UI.CanvasContext2D.ts" />
     <TypeScriptCompile Include="src\UI.Element.ts" />
-    <TypeScriptCompile Include="UnitTests\Convert.Tests.ts" />
-    <TypeScriptCompile Include="UnitTests\System.AppStorageAsync.Tests.ts" />
-    <TypeScriptCompile Include="UnitTests\System.Byte.Tests.ts" />
-    <TypeScriptCompile Include="UnitTests\System.Tests.ts" />
-    <TypeScriptCompile Include="UnitTests\TSTest\Assert.ts" />
-    <TypeScriptCompile Include="UnitTests\TSTest\TSTest.ts" />
-    <TypeScriptCompile Include="UnitTests\UI.CanvasContext2D.Tests.ts" />
-    <TypeScriptCompile Include="UnitTests\unit-tests.ts" />
+    <TypeScriptCompile Include="UnitTests\canvas-tests.ts" />
+    <TypeScriptCompile Include="UnitTests\specs\appStorageAsync.ts" />
+    <TypeScriptCompile Include="UnitTests\specs\collections.map.ts" />
+    <TypeScriptCompile Include="UnitTests\specs\convert.ts" />
+    <TypeScriptCompile Include="UnitTests\specs\system.byte.ts" />
+    <TypeScriptCompile Include="UnitTests\specs\system.ts" />
+    <TypeScriptCompile Include="UnitTests\specs\ui.canvasContext2D.ts" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>
